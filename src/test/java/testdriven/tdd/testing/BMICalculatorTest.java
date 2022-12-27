@@ -12,9 +12,12 @@ import static testdriven.tdd.testing.BMICalculator.isDietRecommended;
 import java.util.ArrayList;
 import java.util.List;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class BMICalculatorTest {
 
@@ -23,6 +26,27 @@ class BMICalculatorTest {
         // given
         double weight = 74.4;
         double height = 1.69;
+        // when
+        final boolean dietRecommended = isDietRecommended(weight, height);
+
+        //then
+        assertTrue(dietRecommended);
+    }
+
+    @ParameterizedTest(name="weight={0},height={1}")
+    @CsvSource(value = {"74.4,1.69","95.0,1.75","110.0,1.79"})
+    void should_ReturnTrue_When_DietRecommendedWithParameterizedTests(double weight,double height) {
+        // given
+        // when
+        final boolean dietRecommended = isDietRecommended(weight, height);
+
+        //then
+        assertTrue(dietRecommended);
+    }
+    @ParameterizedTest(name="weight={0},height={1}")
+    @CsvFileSource(resources = "/diet-data.csv",numLinesToSkip = 1)
+    void should_ReturnTrue_When_DietRecommendedWithCsvFile(double weight,double height) {
+        // given
         // when
         final boolean dietRecommended = isDietRecommended(weight, height);
 
@@ -77,9 +101,9 @@ class BMICalculatorTest {
     void should_ReturnWorstBmi_when_CoderListNotEmpty() {
 
         List<Coder> coderList = new ArrayList<>();
-        coderList.add(new Coder(1.80,60.0));
-        coderList.add(new Coder(1.82,98.0));
-        coderList.add(new Coder(1.82,64.7));
+        coderList.add(new Coder(1.80, 60.0));
+        coderList.add(new Coder(1.82, 98.0));
+        coderList.add(new Coder(1.82, 64.7));
         // when
         final Coder coderWithWorstBMI = BMICalculator.findCoderWithWorstBMI(coderList);
         // then
@@ -96,13 +120,13 @@ class BMICalculatorTest {
 
         // given
         List<Coder> coderList = new ArrayList<>();
-        coderList.add(new Coder(1.80,60.0));
-        coderList.add(new Coder(1.82,98.0));
-        coderList.add(new Coder(0,64.7));
+        coderList.add(new Coder(1.80, 60.0));
+        coderList.add(new Coder(1.82, 98.0));
+        coderList.add(new Coder(0, 64.7));
         // when
-        Executable executable=()-> BMICalculator.findCoderWithWorstBMI(coderList);
+        Executable executable = () -> BMICalculator.findCoderWithWorstBMI(coderList);
         // then
-        assertThrows(ArithmeticException.class,executable);
+        assertThrows(ArithmeticException.class, executable);
     }
 
     // Assert Null Values
@@ -122,14 +146,14 @@ class BMICalculatorTest {
     @Test
     void name() {
         List<Coder> coderList = new ArrayList<>();
-        coderList.add(new Coder(1.80,60.0));
-        coderList.add(new Coder(1.82,98.0));
-        coderList.add(new Coder(1.82,64.7));
-        double[]  expected =new double[]{18.52,29.59,19.53};
+        coderList.add(new Coder(1.80, 60.0));
+        coderList.add(new Coder(1.82, 98.0));
+        coderList.add(new Coder(1.82, 64.7));
+        double[] expected = new double[]{18.52, 29.59, 19.53};
 
         final double[] actual = BMICalculator.getBMIScores(coderList);
 
-        assertArrayEquals(expected,actual);
+        assertArrayEquals(expected, actual);
 
     }
 }
